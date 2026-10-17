@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EduAssign – Centralized College Assignment & Resource Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#00236f; --primary-2:#1e3a8a; --indigo:#4648d4; --indigo-2:#6063ee; --purple:#37007e; --purple-2:#5200b5;
+  --bg:#faf8ff; --surface:#fff; --s1:#f2f3ff; --s2:#eaedff; --s3:#e2e7ff; --s4:#dae2fd; --chip:#e1e0ff; --chip-ink:#2f2ebe;
+  --ink:#131b2e; --ink-2:#444651; --ink-3:#757682; --err:#ba1a1a; --err-bg:#ffdad6; --err-ink:#93000a; --ok:#0a7d4f;
+  --serif:'Liberation Serif','Times New Roman',Times,serif; --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --shadow:0 1px 1px rgba(0,0,0,.05); --grad:linear-gradient(90deg,#00236f 0%,#1e3a8a 50%,#4648d4 100%);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--sans);color:var(--ink);background:var(--bg);font-size:14px;line-height:1.4;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3,.serif{font-family:var(--serif);font-weight:700}
+svg.i{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.hidden{display:none!important}
+.card{background:var(--surface);border-radius:12px;box-shadow:var(--shadow);padding:24px}
+.chip{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:.03em;background:var(--chip);color:var(--chip-ink);white-space:nowrap}
+.chip.sq{border-radius:6px}.chip.red{background:var(--err-bg);color:var(--err-ink)}.chip.solid-red{background:var(--err);color:#fff;border-radius:4px}
+.chip.gray{background:var(--s3);color:var(--ink-2)}.chip.blue{background:var(--s2);color:var(--ink)}
+.dot{width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block}
+.label{font-size:13px;font-weight:600;letter-spacing:.01em;color:var(--ink)}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--indigo);display:flex;align-items:center;gap:6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;transition:.15s}
+.btn.primary{background:var(--indigo-2);color:#fffbff;box-shadow:0 4px 6px -1px rgba(0,0,0,.1)}.btn.primary:hover{background:var(--indigo)}
+.btn.navy{background:var(--primary);color:#fff}.btn.navy:hover{background:var(--primary-2)}
+.btn.soft{background:var(--s2);color:var(--ink)}.btn.soft:hover{background:var(--s3)}
+.btn.white{background:#fff;color:var(--ink);box-shadow:var(--shadow);font-weight:500}
+.btn.sm{padding:6px 12px;font-size:11px;letter-spacing:.02em}
+.icon-btn{width:28px;height:28px;border-radius:6px;display:inline-grid;place-items:center;color:var(--ink-3)}.icon-btn:hover{background:var(--s2);color:var(--primary)}
+.field{position:relative;display:flex;align-items:center}
+.field>.i{position:absolute;left:14px;color:var(--ink-3);font-size:15px;pointer-events:none}
+.field input,.field select{width:100%;background:var(--s1);border:1px solid transparent;border-radius:8px;padding:10px 12px 10px 38px;outline:0;transition:.15s}
+.field select{appearance:none;cursor:pointer;padding-right:34px}
+.field input:focus,.field select:focus{border-color:var(--indigo);background:#fff;box-shadow:0 0 0 3px rgba(70,72,212,.15)}
+.field .caret{left:auto;right:14px;font-size:11px}
+.field.plain input,.field.plain select{background:#fff;border-color:#c6c6d4}
+.row{display:flex;align-items:center}.between{justify-content:space-between}.gap8{gap:8px}.gap16{gap:16px}.grow{flex:1}
+.muted{color:var(--ink-3);font-size:12px}.sub{color:var(--ink-2);font-size:12px}
+.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--indigo));color:#fff;display:grid;place-items:center;font-size:11px;font-weight:700;flex:none}
+.avatar.lg{width:40px;height:40px;font-size:13px}.avatar.sm{width:24px;height:24px;font-size:9px}
+
+/* LOGIN */
+#login{min-height:100%;display:grid;place-items:center;padding:24px;position:relative;overflow:hidden}
+#login .glow1,#login .glow2{position:absolute;border-radius:50%;filter:blur(32px);width:320px;height:320px;pointer-events:none}
+#login .glow1{background:rgba(96,99,238,.15);left:calc(50% - 400px);top:8%}#login .glow2{background:rgba(0,35,111,.1);right:calc(50% - 360px);bottom:4%}
+.login-card{position:relative;width:100%;max-width:400px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1)}
+.login-card .bar{height:6px;background:linear-gradient(90deg,#00236f,#4648d4 50%,#37007e)}
+.login-body{padding:24px;display:flex;flex-direction:column;gap:20px}
+.emblem{width:80px;height:80px;border-radius:12px;background:var(--s2);display:grid;place-items:center;box-shadow:0 1px 2px rgba(0,0,0,.05);margin:0 auto 8px}
+.role-tabs{display:flex;gap:6px;background:var(--s2);padding:4px;border-radius:8px}
+.role-tabs button{flex:1;display:flex;align-items:center;justify-content:center;gap:4px;padding:6px 0;border-radius:8px;font-size:13px;font-weight:600;color:var(--ink-2)}
+.role-tabs button.on{background:var(--primary);color:#fff;box-shadow:0 1px 1px rgba(0,0,0,.05)}
+.callout{background:var(--s1);border-radius:8px;padding:12px;display:flex;gap:10px;color:var(--indigo)}
+.callout p{color:var(--ink-2);font-size:12px;line-height:15px;margin-top:2px}
+.submit{width:100%;background:var(--grad);color:#fff;border-radius:8px;padding:10px 16px;font-family:var(--serif);font-weight:700;font-size:20px;letter-spacing:.025em;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 6px -1px rgba(0,0,0,.1)}
+.submit:hover{filter:brightness(1.1)}
+.fast{background:var(--s1);border-radius:8px;padding:12px}
+.fast .btns{display:flex;gap:6px;margin-top:8px}
+.fast button{flex:1;background:var(--s2);border-radius:8px;padding:6px;font-size:11px;font-weight:600;text-align:center;line-height:14px}
+.fast button small{display:block;font-size:9px;color:var(--ink-3);font-weight:600}
+.err-msg{color:var(--err);font-size:12px;min-height:16px}
+
+/* APP SHELL */
+aside{position:fixed;inset:0 auto 0 0;width:288px;background:#fff;display:flex;flex-direction:column;justify-content:space-between;z-index:30;border-right:1px solid #eef0fb}
+.brand{display:flex;gap:8px;align-items:center;padding:24px;height:79px}
+.brand .serif{font-size:20px;color:var(--primary);line-height:25px}.brand small{display:block;font-size:10px;letter-spacing:.08em;color:var(--ink-2);font-weight:500;text-transform:uppercase}
+nav{padding:16px 8px;display:flex;flex-direction:column;gap:4px}
+nav a{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-radius:8px;color:var(--ink-2);font-size:13px;font-weight:500;cursor:pointer;gap:10px}
+nav a span.l{display:flex;gap:10px;align-items:center}nav a .i{font-size:16px}
+nav a:hover{background:var(--s1)}nav a.on{background:var(--primary);color:#fff;font-weight:600}
+nav a.locked{opacity:.45}
+nav a .chip{font-size:11px}nav a.on .chip{background:#fff;color:var(--primary)}
+.me{margin:8px;background:var(--s1);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px}
+header.top{position:fixed;left:288px;right:0;top:0;height:64px;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:20;border-bottom:1px solid #eef0fb}
+header.top .crumb{display:flex;gap:8px;font-size:13px;font-weight:500;color:var(--ink);align-items:center}
+header.top .sr{width:256px}.sr input{padding:6px 12px 6px 36px!important;font-size:12px;background:var(--s1)}
+main{margin-left:288px;padding:88px 24px 32px;min-height:100vh}
+.page{display:none;flex-direction:column;gap:24px;max-width:1000px;margin:0 auto}.page.on{display:flex}
+.page h1{font-size:36px;line-height:44px;letter-spacing:-.025em;color:var(--primary)}
+.banner{background:var(--grad);border-radius:12px;padding:40px;color:#fff;position:relative;overflow:hidden;box-shadow:0 4px 6px -1px rgba(0,0,0,.1)}
+.banner .b1,.banner .b2{position:absolute;border-radius:50%;background:rgba(192,193,255,.15);filter:blur(20px)}
+.banner .b1{width:256px;height:256px;right:-48px;top:-48px}.banner .b2{width:192px;height:192px;right:144px;bottom:0;background:rgba(234,221,255,.1)}
+.banner h1{color:#fff}.banner .pill{display:inline-flex;gap:6px;align-items:center;background:rgba(255,255,255,.15);backdrop-filter:blur(6px);padding:4px 12px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.05em;color:var(--chip);text-transform:uppercase}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.kpi{background:#fff;border-radius:12px;padding:16px;box-shadow:var(--shadow)}
+.kpi .ic{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:var(--s2);color:var(--primary);font-size:18px}
+.kpi .n{font-family:var(--serif);font-weight:700;font-size:36px;line-height:44px;letter-spacing:-.02em}
+.kpi .t{font-family:var(--serif);font-size:16px;color:var(--ink-2)}
+.kpi svg.sp{width:100%;height:28px;margin-top:12px}
+.grid12{display:grid;grid-template-columns:2fr 1fr;gap:24px;align-items:start}
+.col{display:flex;flex-direction:column;gap:24px}
+h2{font-size:20px;letter-spacing:-.01em;line-height:28px}
+table{border-collapse:collapse;width:100%}
+th{background:var(--s1);text-align:left;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2);padding:14px 12px}
+th:first-child{border-radius:8px 0 0 8px}th:last-child{border-radius:0 8px 8px 0}
+td{padding:14px 12px;font-size:12px;color:var(--ink-2);vertical-align:middle}
+tbody tr+tr td{border-top:1px solid #f0f2ff}tbody tr:hover td{background:#fafaff}
+.tbl-scroll{overflow-x:auto;margin:0 -24px;padding:0 24px}
+.code{font-family:var(--serif);font-weight:700;color:var(--primary);font-size:15px;letter-spacing:-.005em}
+.progress{height:10px;border-radius:99px;background:var(--s2);overflow:hidden}.progress>i{display:block;height:100%;border-radius:99px;transition:width .6s}
+.dist{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.dist>div{background:var(--s1);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.dl-item{border-radius:8px;padding:8px;background:var(--s1);display:flex;flex-direction:column;gap:4px}.dl-item.hot{background:rgba(255,218,214,.3)}
+.dl-item a{color:var(--primary);font-weight:500;font-size:12px;cursor:pointer;display:inline-flex;gap:3px;align-items:center}
+.feed{position:relative;padding-left:24px;display:flex;flex-direction:column;gap:16px}
+.feed:before{content:"";position:absolute;left:10px;top:8px;bottom:8px;width:2px;background:var(--s2);border-radius:2px}
+.feed div{position:relative;font-size:13px;color:var(--ink)}.feed div:before{content:"";position:absolute;left:-19px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--indigo);border:2px solid #fff;box-sizing:content-box;margin-left:-2px}
+.feed small{display:block;color:var(--ink-3);font-size:11px;margin-top:2px}
+
+/* upload */
+.strip{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:12px;padding:16px;gap:16px;box-shadow:var(--shadow)}
+.strip .sq{width:36px;height:36px;border-radius:8px;background:var(--primary);color:#fff;display:grid;place-items:center;flex:none}
+.stat-pill{background:#fff;border-radius:12px;padding:8px 16px;display:flex;gap:12px;align-items:center;box-shadow:0 1px 3px rgba(0,0,0,.05);min-width:182px}
+.stat-pill .sq{width:32px;height:32px;border-radius:8px;background:var(--s2);color:var(--primary);display:grid;place-items:center}
+.form-head{background:var(--primary);color:#fff;border-radius:12px 12px 0 0;padding:16px 24px;display:flex;justify-content:space-between;align-items:center}
+.form-body{background:#fff;border-radius:0 0 12px 12px;padding:24px;display:flex;flex-direction:column;gap:24px;box-shadow:var(--shadow)}
+.fgrid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+.fgrid .full{grid-column:1/-1}
+.fg label{display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;font-weight:600}
+.fg label small{font-weight:400;font-size:11px;color:var(--ink-3)}.fg label small.r{color:var(--err);font-weight:600}
+.editor{background:var(--s1);border-radius:8px;overflow:hidden}
+.toolbar{background:var(--s3);display:flex;align-items:center;gap:6px;padding:8px;font-size:13px}
+.toolbar button{width:28px;height:28px;border-radius:6px;display:grid;place-items:center;font-weight:600}.toolbar button:hover{background:rgba(255,255,255,.6)}
+.toolbar .sep{width:1px;height:16px;background:#b9bfe0}
+.editor textarea{width:100%;border:0;background:transparent;padding:16px;min-height:120px;resize:vertical;outline:0;line-height:22px;font-size:14px}
+.drop{background:var(--s1);border:2px dashed #b5b8e0;border-radius:8px;padding:24px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;transition:.15s;cursor:pointer}
+.drop.over{border-color:var(--indigo);background:var(--s2)}
+.drop .ub{width:56px;height:56px;border-radius:50%;background:var(--s3);color:var(--indigo);display:grid;place-items:center;font-size:20px;margin-bottom:4px}
+.staged{background:var(--s1);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:10px;border:1px solid #fff;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.ribbon{background:var(--s1);border-radius:8px;padding:16px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.bulk{display:flex;gap:4px}
+.toggle{width:44px;height:24px;border-radius:99px;background:#c6c9dc;position:relative;cursor:pointer;transition:.2s;flex:none;display:inline-block}
+.toggle:after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:.2s}
+.toggle.on{background:var(--indigo)}.toggle.on:after{left:22px}
+.filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pager{display:flex;gap:4px;align-items:center}.pager button{min-width:28px;height:28px;border-radius:6px;font-size:11px;font-weight:600;padding:0 8px;color:var(--ink-2)}.pager button.on{background:var(--primary);color:#fff}
+input[type=checkbox]{accent-color:var(--indigo);width:16px;height:16px}
+
+/* users */
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{background:var(--s1);border-radius:6px;padding:4px 12px;font-size:11px;font-weight:600;color:var(--ink-2)}.seg button.on{background:var(--primary);color:#fff}
+.rolepill{display:inline-flex;gap:6px;align-items:center;border-radius:999px;padding:6px 12px;font-size:11px;font-weight:600;line-height:13px;background:var(--s3);color:var(--primary)}
+.rolepill.admin{background:var(--primary);color:#fff}.rolepill.student{background:var(--s1);color:var(--ink);border:1px solid #d6d9ef}
+.uid{display:flex;gap:12px;align-items:center}
+.uid b{font-family:var(--serif);font-size:15px;display:block;letter-spacing:-.005em}
+
+/* library */
+.lib-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.acard{background:#fff;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow);transition:.15s}
+.acard:hover{box-shadow:0 8px 24px rgba(70,72,212,.12);transform:translateY(-2px)}
+.acard h3{font-size:19px;line-height:24px;letter-spacing:-.01em}
+.acard .meta{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;background:var(--s1);border-radius:8px;padding:12px;font-size:11px}
+.acard .meta small{display:block;color:var(--ink-3);font-size:10px}
+.acard .file{background:var(--s1);border-radius:8px;padding:8px 12px;display:flex;justify-content:space-between;font-size:11px;font-weight:500;align-items:center;gap:8px}
+.tagrow{display:flex;gap:8px;justify-content:space-between}
+.tag{background:var(--s2);border-radius:999px;padding:3px 10px;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink)}
+.drawer-bg{position:fixed;inset:0;background:rgba(19,27,46,.35);z-index:40;opacity:0;pointer-events:none;transition:.2s}.drawer-bg.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(480px,100%);background:#fff;z-index:41;transform:translateX(100%);transition:.25s;display:flex;flex-direction:column;box-shadow:-12px 0 32px rgba(0,0,0,.12)}
+.drawer.on{transform:none}.drawer .dh{padding:16px 20px;background:var(--s1);display:flex;justify-content:space-between;align-items:center}
+.drawer .db{padding:20px;overflow:auto;flex:1;display:flex;flex-direction:column;gap:20px}
+.drawer .df{padding:16px 20px;display:flex;gap:12px;border-top:1px solid #eef0fb}
+.pscard{background:var(--s1);border-radius:8px;padding:16px;font-size:13px;color:var(--ink-2);line-height:20px;display:flex;flex-direction:column;gap:10px}
+.step{display:flex;gap:8px}.step i{width:16px;height:16px;border-radius:50%;background:var(--s3);color:var(--indigo);font-size:10px;font-style:normal;font-weight:700;display:grid;place-items:center;flex:none;margin-top:2px}
+.rubric{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.rubric div{background:var(--s1);border-radius:8px;padding:12px;text-align:center;font-size:11px;color:var(--ink-3)}
+.rubric b{display:block;font-family:var(--serif);font-size:20px;color:var(--primary)}
+.res{display:flex;align-items:center;gap:12px;background:var(--s1);border-radius:8px;padding:12px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:100}.toast.on{opacity:1;transform:translate(-50%,0)}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}.grid12{grid-template-columns:1fr}.lib-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:820px){aside{transform:translateX(-100%)}header.top{left:0}main{margin-left:0}.lib-grid,.kpis,.dist,.fgrid{grid-template-columns:1fr}header.top .sr{display:none}.banner{padding:24px}.banner .row{flex-direction:column;align-items:flex-start;gap:16px}}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<section id="login">
+  <div class="glow1"></div><div class="glow2"></div>
+  <form class="login-card" id="loginForm" autocomplete="off">
+    <div class="bar"></div>
+    <div class="login-body">
+      <div style="text-align:center">
+        <div class="emblem"><svg width="56" height="56" viewBox="0 0 56 56" fill="none"><circle cx="28" cy="28" r="26" stroke="#00236f" stroke-width="2.5"/><path d="M12 25 28 17l16 8-16 8z" fill="#00236f"/><path d="M19 29v8c0 3 4 5 9 5s9-2 9-5v-8l-9 4.5z" fill="#4648d4"/><path d="M44 25v10" stroke="#00236f" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="row" style="justify-content:center;gap:6px"><h1 class="serif" style="font-size:24px;line-height:32px;letter-spacing:-.025em;color:var(--primary)">EduAssign</h1><span class="chip" style="letter-spacing:.05em;text-transform:uppercase">V2.4</span></div>
+        <p class="sub" style="margin-top:2px">Centralized College Assignment &amp; Resource Portal</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="row between"><span class="label">Select Operational Role</span><span class="row" style="gap:4px;font-size:11px;font-weight:600;color:var(--indigo)"><i data-ic="shield" data-s="12"></i>RBAC Active</span></div>
+        <div class="role-tabs" id="roleTabs">
+          <button type="button" data-role="student" class="on"><i data-ic="cap" data-s="14"></i>Student</button>
+          <button type="button" data-role="faculty"><i data-ic="badge" data-s="13"></i>Faculty</button>
+          <button type="button" data-role="admin"><i data-ic="shieldcog" data-s="13"></i>Admin</button>
+        </div>
+        <div class="callout"><i data-ic="eye" data-s="18"></i><div><div class="row gap8"><span class="label" id="tierName">Student Access Tier</span><span class="chip" style="font-weight:500" id="tierBadge">Read Only</span></div><p id="tierDesc">View syllabus modules, search coursework, and download assignment materials.</p></div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div><div class="row between" style="margin-bottom:6px"><span class="label">Institutional Email</span><span class="muted">.edu domain</span></div>
+          <div class="field plain"><i data-ic="at"></i><input id="email" type="email" placeholder="student.reg@college.edu" required></div></div>
+        <div><div class="row between" style="margin-bottom:6px"><span class="label">Password</span><a href="#" style="font-size:11px;font-weight:600;color:var(--indigo);text-decoration:none" onclick="toast('Password reset link sent to your institutional email');return false">Forgot / Reset?</a></div>
+          <div class="field plain"><i data-ic="lock"></i><input id="pw" type="password" placeholder="••••••••••••" required><button type="button" id="eye" class="icon-btn" style="position:absolute;right:8px"><i data-ic="eye" data-s="16"></i></button></div></div>
+        <label class="row gap8 sub" style="padding-top:2px;cursor:pointer"><input type="checkbox"> Remember my institutional credentials on this terminal</label>
+        <div class="err-msg" id="err"></div>
+        <button class="submit" type="submit">Sign In to Portal <i data-ic="arrow" data-s="14"></i></button>
+      </div>
+      <div class="fast">
+        <div class="row between"><span class="row gap8" style="font-size:11px;font-weight:600;letter-spacing:.05em;color:var(--ink-3);text-transform:uppercase"><i data-ic="code" data-s="11"></i>Evaluation fast-fill</span><span style="font-size:11px;font-weight:600;color:var(--ink-2)">Tap to populate</span></div>
+        <div class="btns">
+          <button type="button" data-fill="student" style="color:var(--primary)">Student<small>student.demo</small></button>
+          <button type="button" data-fill="faculty" style="color:var(--indigo)">Faculty<small>prof.demo</small></button>
+          <button type="button" data-fill="admin" style="color:var(--purple)">Admin<small>admin.sys</small></button>
+        </div>
+      </div>
+      <div style="text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center">
+        <span class="chip blue" style="color:var(--ink-2);padding:4px 12px"><i data-ic="shield" data-s="11"></i>University SSO &amp; RBAC Backend Auth Protocol</span>
+        <span class="muted">Need access or department registration? <a href="#" style="color:var(--indigo);text-decoration:none" onclick="toast('Please contact your Department Admin');return false">Contact Dept Admin</a></span>
+      </div>
+    </div>
+  </form>
+</section>
+
+<!-- ============ APP ============ -->
+<div id="app" class="hidden">
+  <aside>
+    <div>
+      <div class="brand"><svg width="32" height="32" viewBox="0 0 56 56" fill="none"><circle cx="28" cy="28" r="26" stroke="#00236f" stroke-width="3"/><path d="M12 25 28 17l16 8-16 8z" fill="#00236f"/><path d="M19 29v8c0 3 4 5 9 5s9-2 9-5v-8l-9 4.5z" fill="#4648d4"/></svg><div><div class="serif">EduAssign</div><small>College Assignment Portal</small></div></div>
+      <nav id="nav"></nav>
+    </div>
+    <div class="me">
+      <div class="row gap8"><div class="avatar lg" id="meAv">SJ</div><div><div class="serif" style="font-size:15px;line-height:20px" id="meName">Prof. Sarah Jenkins</div><div class="muted" id="meRole" style="font-size:11px">Faculty / Assignment Manager</div></div></div>
+      <div class="row between"><span class="chip" id="meView">Faculty View</span><button class="row" style="gap:4px;color:var(--err);font-size:12px;font-weight:500" id="logout"><i data-ic="logout" data-s="12"></i>Logout</button></div>
+    </div>
+  </aside>
+
+  <header class="top">
+    <div class="crumb"><i data-ic="cal" data-s="14" style="color:var(--indigo)"></i><span>Spring 2025 Semester</span><span style="color:var(--ink-3)">•</span><span style="font-weight:400">Dept of Computer Science &amp; Eng</span></div>
+    <div class="row gap16">
+      <div class="field sr"><i data-ic="search" data-s="13"></i><input placeholder="Search assignments, rubrics, tags..." id="gsearch"></div>
+      <button class="icon-btn" style="position:relative" onclick="toast('No new notifications')"><i data-ic="bell" data-s="16"></i><span style="position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--err)"></span></button>
+      <button class="icon-btn" onclick="toast('Help center opens in a new tab in the live portal')"><i data-ic="help" data-s="16"></i></button>
+      <span class="chip" style="background:var(--indigo-2);color:#fff;padding:4px 10px" id="hdrBadge">Manager Active</span>
+      <div class="avatar" id="hdrAv">SJ</div>
+    </div>
+  </header>
+
+  <main>
+    <!-- DASHBOARD -->
+    <section class="page" id="p-dashboard">
+      <div class="banner"><div class="b1"></div><div class="b2"></div>
+        <div class="row between" style="position:relative;gap:24px;flex-wrap:wrap">
+          <div style="max-width:560px;display:flex;flex-direction:column;gap:6px">
+            <span class="pill"><i data-ic="cap" data-s="13"></i>Academia Management Portal</span>
+            <h1 id="welcome">Welcome back, Prof. Sarah Jenkins 👋</h1>
+            <p style="color:#b6c4ff;font-size:14px;line-height:22px">Department of Computer Science &amp; Engineering • Academic Year 2024–2025 • Term 4 Ongoing</p>
+          </div>
+          <div class="row" style="gap:8px;flex-wrap:wrap">
+            <button class="btn primary" style="padding:10px 20px" data-go="upload">+ Upload New Assignment</button>
+            <button class="btn white" onclick="exportCSV()"><i data-ic="download" data-s="14"></i>Export Reports (CSV/PDF)</button>
+          </div>
+        </div>
+      </div>
+      <div class="kpis" id="kpis"></div>
+      <div class="grid12">
+        <div class="col">
+          <div class="card" style="display:flex;flex-direction:column;gap:16px">
+            <div class="row between"><div><h2>Recently Uploaded Assignments</h2><p class="sub">Live academic repository synchronized across faculty workspaces</p></div>
+              <div class="seg" id="dashFilter"><button class="on" data-f="Active">Filter: Active</button><button data-f="All">All Courses</button></div></div>
+            <div class="tbl-scroll"><table><thead><tr><th>Assignment code &amp; title</th><th>Subject</th><th>Faculty</th><th>Due date</th><th>File type</th><th>Status</th><th style="text-align:right">Actions</th></tr></thead><tbody id="dashRows"></tbody></table></div>
+            <div class="row between"><span class="muted" style="font-weight:600" id="dashCount"></span><button class="row" style="gap:4px;color:var(--primary);font-size:11px;font-weight:600" data-go="library">View All in Assignment Library <i data-ic="arrow" data-s="11"></i></button></div>
+          </div>
+          <div class="card" style="display:flex;flex-direction:column;gap:16px">
+            <div class="row between"><div><h2>Course Distribution Overview</h2><p class="sub">Live quota and volume allocation across CSE major subjects</p></div><span class="chip gray" style="border-radius:4px;background:var(--s2);color:var(--ink)">Curriculum Term 2025</span></div>
+            <div class="dist" id="dist"></div>
+          </div>
+          <div class="card" style="background:var(--s2);display:flex;gap:16px;padding:16px;box-shadow:none"><div class="kpi ic" style="width:42px;height:47px;border-radius:8px;background:#fff;color:var(--indigo);display:grid;place-items:center;flex:none;padding:0"><i data-ic="megaphone" data-s="20"></i></div>
+            <div><div class="row between" style="gap:12px;flex-wrap:wrap"><h3 style="font-size:16px">Mid-Term Rubric Synchronization Required</h3><span class="muted" style="font-weight:600">Notice Ref: CSE-2025-09</span></div>
+              <p style="color:var(--ink-2);font-size:14px;line-height:22px;margin-top:4px">Per the Academic Council Directive, all lab manuals uploaded for Week 7 through 10 must attach standardized ABET Outcome 4 rubrics before student submission windows open.</p></div></div>
+        </div>
+        <div class="col">
+          <div class="card" style="display:flex;flex-direction:column;gap:16px">
+            <div class="row between"><h2 style="color:var(--err);display:flex;gap:6px;align-items:center"><i data-ic="alarm" data-s="20"></i>Urgent Deadlines</h2><span class="chip red">Next 48 hrs</span></div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div class="dl-item hot"><div class="row between" style="align-items:flex-start;gap:8px"><b class="serif" style="font-size:15px;line-height:20px">CS602: Distributed Consensus Lab</b><span class="chip solid-red">18 hrs left</span></div><div class="row between"><span class="sub">Section A &amp; B • 114 Enrolled</span><a onclick="toast('Handout downloaded')"><i data-ic="download" data-s="10"></i>Get Handout</a></div></div>
+              <div class="dl-item"><div class="row between" style="align-items:flex-start;gap:8px"><b class="serif" style="font-size:15px;line-height:20px">CS501: Mutex Synchronization Task</b><span class="chip" style="border-radius:4px">Tomorrow, 11:59 PM</span></div><div class="row between"><span class="sub">CSE Core • 86 Enrolled</span><a onclick="toast('Handout downloaded')"><i data-ic="download" data-s="10"></i>Get Handout</a></div></div>
+              <div class="dl-item"><div class="row between" style="align-items:flex-start;gap:8px"><b class="serif" style="font-size:15px;line-height:20px">DS304: SQL Optimization Exercise</b><span class="chip gray" style="border-radius:4px;color:var(--ink)">In 36 hrs</span></div><div class="row between"><span class="sub">Data Science • 92 Enrolled</span><a onclick="toast('Handout downloaded')"><i data-ic="download" data-s="10"></i>Get Handout</a></div></div>
+            </div>
+          </div>
+          <div class="card" style="display:flex;flex-direction:column;gap:12px">
+            <h2 style="font-size:18px;display:flex;gap:6px;align-items:center"><i data-ic="shield" data-s="16" style="color:var(--indigo)"></i>Role Permissions &amp; Security</h2>
+            <p class="sub" style="font-size:13px">Strict institutional privilege enforcement is enabled for your department session.</p>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div class="row between" style="background:var(--s1);border-radius:8px;padding:10px"><span class="row gap8 label"><span class="dot" style="color:var(--purple)"></span>Admin</span><span class="muted">Full system control</span></div>
+              <div class="row between" style="background:var(--s1);border-radius:8px;padding:10px"><span class="row gap8 label"><span class="dot" style="color:var(--indigo)"></span>Faculty</span><span class="muted">Upload &amp; edit</span></div>
+              <div class="row between" style="background:var(--s1);border-radius:8px;padding:10px"><span class="row gap8 label"><span class="dot" style="color:var(--ink-3)"></span>Student</span><span class="muted">Read &amp; download</span></div>
+            </div>
+          </div>
+          <div class="card" style="display:flex;flex-direction:column;gap:16px">
+            <div class="row between"><h2 style="font-size:18px">Recent Activity</h2><button class="icon-btn" onclick="toast('Activity feed refreshed')"><i data-ic="refresh" data-s="14"></i></button></div>
+            <div class="feed"><div>Prof. K. Verma uploaded AI Lab Assignment 2<small>14 minutes ago • AI Lab CSE</small></div><div>Dept Admin approved 3 new faculty uploaders for Semester 4<small>1 hour ago • Auth Controller</small></div><div>CS602 Rubric amended with new test case suite guidelines<small>3 hours ago • Prof. S. Jenkins</small></div><div>Batch export initiated for Semester Gradebook verification<small>Yesterday, 4:30 PM • Registrar Office</small></div></div>
+          </div>
+          <div class="card" style="display:flex;flex-direction:column;gap:12px">
+            <div class="row between"><h2 style="font-size:18px;display:flex;gap:8px;align-items:center;line-height:22px"><i data-ic="cloud" data-s="18" style="color:var(--indigo)"></i>Cloud Storage &amp; AWS S3</h2><span class="row" style="gap:4px;font-size:11px;font-weight:600;color:var(--ok)"><span class="dot"></span>Online</span></div>
+            <div><div class="row between muted" style="margin-bottom:4px;font-weight:600"><span>Storage used: 68.4 GB of 100 GB</span><span>68%</span></div><div class="progress" style="height:8px"><i style="width:68%;background:var(--indigo-2)"></i></div></div>
+            <p class="muted" style="line-height:18px">Server Region: AWS us-east-1 (N. Virginia). AES-256 at-rest encryption active. Backups run daily at 02:00 UTC.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- UPLOAD -->
+    <section class="page" id="p-upload">
+      <div class="strip">
+        <div class="row gap16" style="min-width:0"><div class="sq"><i data-ic="shield" data-s="16"></i></div>
+          <div style="min-width:0"><div class="row gap8" style="flex-wrap:wrap"><b style="font-size:13px">Authorized Session: Assignment Manager</b><span class="chip" style="background:var(--indigo);color:#fff;text-transform:uppercase">Faculty Level 4</span><span class="chip" style="background:none;color:var(--ink-2);font-size:11px"><span class="dot" style="color:var(--indigo)"></span>TLS 1.3 Verified</span></div>
+            <p class="sub">Backend authentication verifies upload tokens, department course-affiliations, and faculty credentials before publishing.</p></div></div>
+        <div class="row gap8 muted" style="white-space:nowrap">Storage Node: <span class="chip blue" style="border-radius:6px;font-family:ui-monospace,monospace;color:var(--primary)">AWS-East-S3-EduVault</span></div>
+      </div>
+      <div class="row between" style="align-items:flex-start;gap:24px;flex-wrap:wrap">
+        <div style="max-width:580px"><div class="eyebrow"><i data-ic="book" data-s="13"></i>Curriculum Coursework Control</div><h1 style="margin:6px 0 10px">Assignment Management &amp; Upload Portal</h1><p style="color:var(--ink-2);line-height:22px">Manage curriculum coursework, publish structured assignment problem sets, configure rubrics, and enforce rigorous submission deadlines across academic tiers.</p></div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="stat-pill"><div class="sq"><i data-ic="check" data-s="15"></i></div><div><div class="muted" style="font-size:10px;letter-spacing:.05em;text-transform:uppercase;font-weight:600">Active published</div><b class="serif" style="font-size:16px" id="statPub">18 Problem Sets</b></div></div>
+          <div class="stat-pill"><div class="sq"><i data-ic="clip" data-s="15"></i></div><div><div class="muted" style="font-size:10px;letter-spacing:.05em;text-transform:uppercase;font-weight:600">Pending reviews</div><b class="serif" style="font-size:16px">284 Submissions</b></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="form-head"><div class="row gap16"><i data-ic="cloudup" data-s="22"></i><div><h2 style="font-size:16px;line-height:20px">Upload &amp; Configure Problem Set</h2><p style="font-size:12px;color:#b6c4ff">Specify course target parameters, syllabus weight, and distribute encrypted solution templates</p></div></div><span class="row gap8" style="font-size:11px;font-weight:600"><i data-ic="info" data-s="13"></i>Auto-saves locally</span></div>
+        <form class="form-body" id="uploadForm">
+          <div class="fgrid">
+            <div class="fg"><label>Assignment Title <span style="color:var(--err)">*</span><small>e.g., Spec 03 / Practical</small></label><div class="field"><i data-ic="doc"></i><input id="fTitle" value="Design Pattern Implementation & UML Architecture" required></div></div>
+            <div class="fg"><label>Subject &amp; Course Code *</label><div class="field"><i data-ic="book"></i><select id="fSubj"><option>CS-403: Object Oriented Software Engineering</option><option>CS-302: Data Structures &amp; Algorithms</option><option>CS-501: Cloud Computing</option><option>AI-210: Intelligent Systems</option></select><i class="caret" data-ic="chev" data-s="11"></i></div></div>
+          </div>
+          <div class="fgrid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-top:-8px">
+            <div class="fg"><label>Instructor In-Charge</label><div class="field"><i data-ic="user"></i><input value="Prof. Sarah Jenkins" readonly style="padding-right:84px"><span class="chip" style="position:absolute;right:10px;font-size:10px">Authorized</span></div></div>
+            <div class="fg"><label>Submission Deadline * <small class="r">Strict Cutoff</small></label><div class="field"><i data-ic="cal"></i><input type="datetime-local" id="fDue" value="2025-11-24T23:59"></div></div>
+            <div class="fg"><label>Target Cohort &amp; Section</label><div class="field"><i data-ic="users"></i><select><option>Semester 5 — Sections A &amp; B</option><option>Semester 5 — Section C</option><option>Semester 7 — All Sections</option></select><i class="caret" data-ic="chev" data-s="11"></i></div></div>
+            <div class="fg"><label>Total Points</label><div class="field"><i data-ic="star"></i><input type="number" id="fPts" value="100" min="1"></div></div>
+          </div>
+          <div class="fg"><label>Problem Brief &amp; Submission Instructions <small>Markdown syntax supported</small></label>
+            <div class="editor"><div class="toolbar"><button type="button"><b>B</b></button><button type="button"><i style="font-family:serif">I</i></button><button type="button"><u>U</u></button><span class="sep"></span><button type="button"><i data-ic="list" data-s="14"></i></button><button type="button"><i data-ic="olist" data-s="14"></i></button><button type="button"><i data-ic="code" data-s="14"></i></button><button type="button"><i data-ic="link" data-s="14"></i></button><span class="sep"></span><span class="muted" style="padding:0 6px">Heading 3</span><span class="grow"></span><button type="button" style="width:auto;padding:0 8px;gap:6px;display:flex;align-items:center;font-size:11px;color:var(--ink-2)" onclick="toast('Syllabus AI enhancement is simulated in this prototype')"><i data-ic="spark" data-s="13"></i>Enhance with Syllabus AI</button></div>
+              <textarea id="fBrief">1. Formulate a class diagram demonstrating Factory Pattern and Observer Pattern for an automated sensor registry.
+2. Provide compiled unit tests ensuring >85% branch coverage using JUnit 5.
+3. Submit single zip bundle or GitHub repository URL before deadline cutoff. Late submissions deduct 10% per 24hr cycle.</textarea></div></div>
+          <div class="fgrid" style="grid-template-columns:1.4fr 1fr">
+            <div class="fg"><label>Supporting Specification Dossier / Lab Materials</label>
+              <div class="drop" id="drop"><div class="ub"><i data-ic="upload" data-s="20"></i></div><b class="serif" style="font-size:16px">Drag and drop problem sheet, rubric, or code skeleton</b><span class="sub">Encrypted cloud upload pipeline accepts .PDF or .DOCX dossiers</span><div class="row gap8" style="margin-top:6px;flex-wrap:wrap;justify-content:center"><span class="chip gray" style="border-radius:4px;background:var(--s3);color:var(--primary)">PDF</span><span class="chip gray" style="border-radius:4px;background:var(--s3);color:var(--primary)">DOCX</span><span class="chip gray" style="border-radius:4px;background:var(--s3);color:var(--ink-2)">Max 25 MB file size</span><span class="chip gray" style="border-radius:4px;background:var(--s3);color:var(--ink-2)">SHA-256 Hashed</span></div></div>
+              <input type="file" id="file" accept=".pdf,.docx" class="hidden"></div>
+            <div class="fg"><label>Staged Document Ready to Bind</label>
+              <div class="staged"><div class="row gap8"><div style="width:44px;height:44px;border-radius:8px;background:var(--err-bg);color:var(--err);display:grid;place-items:center"><i data-ic="doc" data-s="20"></i></div><div class="grow" style="min-width:0"><b class="serif" style="font-size:15px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="fname">CS403_Assignment_Spec_v2.pdf</b><span class="sub"><span id="fsize">4.2 MB</span> • <span style="color:var(--indigo)">Uploaded Successfully</span></span></div><button type="button" class="icon-btn" id="rmFile"><i data-ic="x" data-s="14"></i></button></div>
+                <div><div class="row between" style="font-size:11px;font-weight:600;margin-bottom:4px"><span>Encrypted Payload Verification</span><span style="color:var(--indigo)">100%</span></div><div class="progress" style="height:8px"><i style="width:100%;background:var(--indigo)"></i></div></div>
+                <div class="row between chip" style="background:#fff;color:var(--ink-2);border-radius:6px;font-weight:600;padding:4px 8px"><span class="row gap8"><i data-ic="shieldok" data-s="13"></i>Antivirus Clean</span><span style="font-family:ui-monospace,monospace;font-weight:400;color:var(--ink-3)">f89e...4a2b</span></div></div>
+              <label class="row sub" style="gap:8px;margin-top:10px;align-items:flex-start;font-weight:400"><input type="checkbox" checked style="margin-top:2px"> Notify all 142 enrolled students upon publishing via automated institutional email &amp; mobile push notification.</label></div>
+          </div>
+          <div class="ribbon"><span class="row gap8 sub" style="font-weight:600;font-size:11px"><i data-ic="eye" data-s="14"></i>Visibility set to: Immediate upon publishing</span>
+            <div class="row gap8"><button type="reset" class="btn soft" id="clearForm">Clear Form</button><button type="button" class="btn white" id="draftBtn"><i data-ic="bookmark" data-s="13"></i>Save as Draft</button><button type="submit" class="btn primary" style="background:var(--indigo)"><i data-ic="send" data-s="13"></i>Publish Assignment</button></div></div>
+        </form>
+      </div>
+      <div class="col" style="gap:16px">
+        <div class="row between"><div><h2>Active Curriculum Repository</h2><p class="sub">Review existing assignments, monitor realtime submission influx, duplicate parameters, or archive terms.</p></div>
+          <div class="bulk"><button class="btn soft sm" onclick="exportCSV()"><i data-ic="download" data-s="11"></i>Export Registry CSV</button><button class="btn soft sm" onclick="renderRepo();toast('Repository refreshed')"><i data-ic="refresh" data-s="11"></i>Refresh</button></div></div>
+        <div class="card row gap16" style="padding:16px;flex-wrap:wrap"><div class="field grow" style="min-width:220px;max-width:384px"><i data-ic="search" data-s="14"></i><input id="repoQ" placeholder="Filter by title, assignment code, tag..." style="padding-top:8px;padding-bottom:8px"></div><span class="grow"></span>
+          <div class="field" style="width:190px"><select id="repoSubj"><option>All Subjects</option></select><i class="caret" data-ic="chev" data-s="10"></i></div><div class="field" style="width:160px"><select id="repoStat"><option>All Statuses</option><option>Published</option><option>Draft</option><option>Archived</option></select><i class="caret" data-ic="chev" data-s="10"></i></div>
+          <button class="icon-btn" onclick="document.getElementById('repoQ').value='';repoSubj.value='All Subjects';repoStat.value='All Statuses';renderRepo()"><i data-ic="filter" data-s="16"></i></button></div>
+        <div class="card" style="padding:0;overflow:hidden"><div style="overflow-x:auto"><table style="min-width:900px"><thead><tr><th style="width:44px"><input type="checkbox" id="chkAll"></th><th>Code &amp; Assignment Title</th><th>Subject</th><th>Instructor</th><th>Upload Date</th><th>Deadline &amp; Countdown</th><th>Status</th><th style="text-align:right">Actions</th></tr></thead><tbody id="repoRows"></tbody></table></div>
+          <div class="row between" style="padding:16px"><span class="muted"><span id="selCount">0 selected</span> &nbsp;•&nbsp; <span id="repoCount"></span></span><div class="pager"><button>‹</button><button class="on">1</button><button>2</button><button>3</button><button>›</button></div></div></div>
+      </div>
+    </section>
+
+    <!-- USERS -->
+    <section class="page" id="p-users">
+      <div class="row between" style="align-items:flex-start;gap:24px;flex-wrap:wrap"><div style="max-width:600px"><div class="row gap8 muted" style="font-size:11px;font-weight:600"><span class="chip" style="color:var(--primary)"><i data-ic="shield" data-s="10"></i>Security &amp; Governance</span><span>•</span><span style="font-weight:400">Academic Year 2024-2025</span></div><h1 style="margin:8px 0">User &amp; Access Permissions Management</h1><p style="color:var(--ink-2);line-height:22px">Grant upload and management permissions to selected faculty and staff members. Enforce strict role-based access control (RBAC) across departments.</p></div>
+        <div class="row gap8"><button class="btn soft" onclick="toast('Bulk role assignment wizard (demo)')"><i data-ic="users" data-s="14"></i>Bulk Role Assignment</button><button class="btn primary" style="background:var(--indigo)" onclick="addUser()"><i data-ic="adduser" data-s="14"></i>+ Add New User</button></div></div>
+      <div class="kpis">
+        <div class="kpi"><div class="row between" style="align-items:flex-start"><span class="muted" style="font-weight:600;letter-spacing:.05em;text-transform:uppercase;font-size:11px">Total Enrolled<br>Users</span><div class="ic"><i data-ic="users" data-s="18"></i></div></div><div class="n" style="margin-top:8px" id="uTotal">1,420</div><p class="sub" style="margin-top:12px"><span style="color:var(--indigo);font-weight:600">↗ +3.8%</span> Active this semester</p></div>
+        <div class="kpi"><div class="row between" style="align-items:flex-start"><span class="muted" style="font-weight:600;letter-spacing:.05em;text-transform:uppercase;font-size:11px">Students (Read &amp;<br>Download)</span><div class="ic"><i data-ic="cap" data-s="18"></i></div></div><div class="n" style="margin-top:8px">1,365</div><p class="sub" style="margin-top:12px"><span class="chip gray">96.1% of base</span> Scoped access</p></div>
+        <div class="kpi"><div class="row between" style="align-items:flex-start"><span class="muted" style="font-weight:600;letter-spacing:.05em;text-transform:uppercase;font-size:11px">Assignment<br>Managers</span><div class="ic" style="color:var(--indigo-2)"><i data-ic="upload" data-s="18"></i></div></div><div class="n" style="margin-top:8px;color:var(--indigo)">48</div><p class="sub" style="margin-top:12px"><span class="chip">Faculty Upload Rights</span></p></div>
+        <div class="kpi"><div class="row between" style="align-items:flex-start"><span class="muted" style="font-weight:600;letter-spacing:.05em;text-transform:uppercase;font-size:11px">System<br>Administrators</span><div class="ic" style="color:var(--purple)"><i data-ic="shield" data-s="18"></i></div></div><div class="n" style="margin-top:8px;color:var(--purple)">7</div><p class="sub" style="margin-top:12px"><span class="chip" style="color:var(--purple)">Full Root Control</span></p></div>
+      </div>
+      <div class="card" style="display:flex;flex-direction:column;gap:12px">
+        <div class="row gap16" style="flex-wrap:wrap"><div class="field" style="width:225px"><i data-ic="search" data-s="14"></i><input id="uQ" placeholder="Search by name, faculty ID, student rol"></div>
+          <div class="row gap8" style="flex-wrap:wrap"><span class="muted" style="font-weight:600">ROLE:</span><div class="seg" id="uRole"><button class="on" data-r="all">All Roles</button><button data-r="admin">Admin (7)</button><button data-r="manager">Assignment Manager (48)</button><button data-r="student">Student (1,365)</button></div></div>
+          <span class="grow"></span><div class="row gap8"><span class="muted" style="font-weight:600">DEPT:</span><div class="field" style="width:200px"><select id="uDept"><option>Computer Science &amp; Eng</option><option>Information Technology</option><option>Electronics &amp; Comm</option><option>Mechanical Engineering</option><option>All Departments</option></select><i class="caret" data-ic="chev" data-s="10"></i></div></div></div>
+        <div class="callout" style="padding:12px 16px;align-items:center;background:var(--s2);color:var(--primary)"><i data-ic="info" data-s="16"></i><p style="margin:0;color:var(--primary);font-weight:600;font-size:12px;line-height:18px;flex:1">RBAC Policy Active: Only designated <i>Assignment Managers</i> and <i>System Admins</i> are permitted to publish syllabi, create problem sets, and upload grading rubrics to the central academic repository.</p><a style="color:var(--indigo);font-size:11px;font-weight:600;cursor:pointer" onclick="toast('Audit policy v4.2 (demo)')">View Audit Policy</a></div>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <div class="row between" style="padding:16px 24px;background:var(--s1)"><div class="row gap8"><h2 style="font-size:16px">Enrolled Academic Accounts</h2><span class="chip blue" style="background:#fff;color:var(--ink-2)" id="uShow"></span></div><div class="row"><button class="icon-btn" onclick="exportCSV()"><i data-ic="download" data-s="14"></i></button><button class="icon-btn" onclick="renderUsers();toast('Accounts refreshed')"><i data-ic="refresh" data-s="14"></i></button></div></div>
+        <div style="overflow-x:auto"><table style="min-width:860px"><thead><tr><th>User identity</th><th>Dept &amp; ID / Roll no</th><th>Assigned role</th><th>Upload right</th><th>Edit / delete</th><th>Manage users</th><th>Status</th><th>Actions</th></tr></thead><tbody id="uRows"></tbody></table></div>
+        <div class="row between" style="padding:16px 24px"><span class="muted" id="uFoot"></span><div class="pager"><button>‹</button><button class="on">1</button><button>2</button><button>3</button><button>…</button><button>237</button><button>›</button></div></div>
+      </div>
+      <div class="grid12" style="grid-template-columns:1fr 1fr 1fr">
+        <div class="card" style="display:flex;flex-direction:column;gap:12px"><h2 style="font-size:16px;display:flex;gap:8px;align-items:center"><i data-ic="shield" data-s="16" style="color:var(--indigo)"></i>Role Capabilities</h2>
+          <div class="pscard" style="font-size:12px;line-height:16px"><b style="color:var(--ink)">System Admin</b>Full tenant authority, departmental reassignments, server audit logs &amp; user deletions.</div>
+          <div class="pscard" style="font-size:12px;line-height:16px"><b style="color:var(--ink)">Assignment Manager (Faculty)</b>Authorized to upload assignments, modify rubrics, attach reference solutions &amp; grade.</div>
+          <div class="pscard" style="font-size:12px;line-height:16px"><b style="color:var(--ink)">Student Enrollee</b>Read-only library access, assignment file download, own submission turnaround.</div></div>
+        <div class="card" style="display:flex;flex-direction:column;gap:12px"><div class="row between"><h2 style="font-size:16px">Permissions Audit Log</h2><a style="color:var(--indigo);font-size:11px;font-weight:600;cursor:pointer" onclick="toast('Full log opens in the Logs & Security page')">Full Log</a></div>
+          <div class="pscard" style="font-size:12px;line-height:16px;flex-direction:row;justify-content:space-between"><span><b style="color:var(--ink)">Prof. Elena Rostova</b><br>Assigned 'Assignment Manager'</span><span class="muted">12m ago</span></div>
+          <div class="pscard" style="font-size:12px;line-height:16px;flex-direction:row;justify-content:space-between"><span><b style="color:var(--ink)">Prof. Sarah Jenkins</b><br>Renewed upload credential token</span><span class="muted">1h ago</span></div>
+          <div class="pscard" style="font-size:12px;line-height:16px;flex-direction:row;justify-content:space-between"><span><b style="color:var(--ink)">TA Michael Stone</b><br>Revoked Upload Rights (Graduate</span><span class="muted">5h ago</span></div></div>
+        <div class="card" style="display:flex;flex-direction:column;gap:12px"><h2 style="font-size:16px;display:flex;gap:8px;align-items:center"><i data-ic="shield" data-s="16" style="color:var(--indigo)"></i>Governance Directives</h2><p class="sub" style="line-height:18px">Institutional accreditation requires all file uploaders to have active multi-factor authentication (MFA) and registered departmental faculty status.</p>
+          <div class="row gap8 label" style="font-size:12px;align-items:flex-start"><i data-ic="checkc" data-s="15" style="color:var(--indigo)"></i>MFA Enforcement: 100% active on Managers</div><div class="row gap8 label" style="font-size:12px;align-items:flex-start"><i data-ic="checkc" data-s="15" style="color:var(--indigo)"></i>Academic Integrity Protocol V4.2 active</div>
+          <span class="grow"></span><button class="btn soft sm" style="color:var(--primary);padding:10px" onclick="toast('Compliance report generated')"><i data-ic="download" data-s="12"></i>Download Audit Compliance Report</button></div>
+      </div>
+    </section>
+
+    <!-- LIBRARY -->
+    <section class="page" id="p-library">
+      <div class="row between" style="align-items:flex-end;gap:16px;flex-wrap:wrap"><div><div class="eyebrow" style="text-transform:uppercase;font-size:13px;letter-spacing:.08em"><i data-ic="cap" data-s="14"></i>Semester VI • Spring Session</div><div class="row gap16" style="align-items:baseline;flex-wrap:wrap"><h1>Assignment Library</h1><span class="sub" style="font-size:13px">Welcome, Alex Morgan (ID: 2022-CSE-089)</span></div></div><span class="chip" style="background:var(--s3);color:var(--primary);padding:6px 14px;font-weight:600"><i data-ic="eye" data-s="13"></i>Student View: Read &amp; Download Only</span></div>
+      <div class="card" style="background:var(--s2);display:flex;gap:16px;padding:16px;box-shadow:none"><div style="width:32px;height:32px;border-radius:8px;background:#fff;display:grid;place-items:center;color:var(--indigo);flex:none"><i data-ic="info" data-s="16"></i></div><div><b class="serif" style="font-size:15px">Official Student Repository Notice</b><p class="sub" style="line-height:18px;margin-top:4px">As an enrolled undergraduate student, you have verified access to search, filter, preview, and download all published coursework briefs and accompanying starter bundles. Upload, grading, and rubric editing controls remain securely locked to designated faculty professors and academic directors.</p></div></div>
+      <div class="card" style="display:flex;flex-direction:column;gap:12px;padding:24px 28px">
+        <div class="field"><i data-ic="search" data-s="16"></i><input id="lQ" placeholder="Search assignments by title, subject code, topic, or professor name..." style="padding:14px 40px 14px 44px;background:var(--s1)"><button class="icon-btn" style="position:absolute;right:10px" onclick="lQ.value='';renderLib()"><i data-ic="x" data-s="14"></i></button></div>
+        <div class="row gap8" style="flex-wrap:wrap"><span class="muted" style="font-size:10px;font-weight:600;letter-spacing:.05em;width:62px">SUBJECT:</span><div class="seg" id="lSubj"><button class="on" data-s="all" style="background:var(--s4);color:var(--primary)">All Subjects</button><button data-s="CS601">CS601 Web Technologies</button><button data-s="CS602">CS602 Distributed Systems</button><button data-s="CS603">CS603 AI &amp; ML</button><button data-s="MA401">MA401 Discrete Math</button></div></div>
+        <div class="row gap8" style="flex-wrap:wrap"><span class="muted" style="font-size:10px;font-weight:600;letter-spacing:.05em;width:62px">DEADLINE:</span><div class="seg" id="lDead"><button class="on" data-d="up" style="background:var(--s4);color:var(--primary)">Upcoming Deadlines</button><button data-d="week">Due this week</button><button data-d="past">Archived / Past</button></div></div>
+        <div class="row gap16"><span class="muted" style="font-weight:600" id="lCount"></span><div class="field" style="width:200px"><i data-ic="sort" data-s="13"></i><select id="lSort" style="padding:6px 28px 6px 34px;font-size:11px"><option value="dl">Sort by: Deadline (Soonest first)</option><option value="up">Sort by: Newest upload</option><option value="w">Sort by: Weightage</option></select></div></div>
+      </div>
+      <div class="lib-grid" id="libGrid"></div>
+    </section>
+  </main>
+
+  <div class="drawer-bg" id="dBg"></div>
+  <div class="drawer" id="drawer"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- tiny icon set (inline SVG so no external assets are needed) ---------- */
+const P={
+grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+book:'<path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2z"/><path d="M22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/>',
+upload:'<path d="M12 16V5m0 0-4 4m4-4 4 4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>',
+cloudup:'<path d="M7 18a5 5 0 1 1 1-9.9A6 6 0 0 1 19.5 10 4 4 0 0 1 18 18"/><path d="m12 12-3 3m3-3 3 3m-3-3v8"/>',
+shield:'<path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/>',
+shieldok:'<path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="m9 12 2 2 4-4"/>',
+shieldcog:'<path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><circle cx="12" cy="11" r="2"/>',
+users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/>',
+adduser:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M19 8v6m-3-3h6"/>',
+user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+badge:'<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="2.5"/><path d="M8 17c.8-2 2.3-3 4-3s3.2 1 4 3"/>',
+cap:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5M22 9v6"/>',
+lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+at:'<circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/>',
+eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>',
+arrow:'<path d="M5 12h14m-6-6 6 6-6 6"/>',
+check:'<path d="m5 12 5 5 9-10"/>',checkc:'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',
+x:'<path d="M6 6l12 12M18 6 6 18"/>',
+search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+bell:'<path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 1-1 1.7M12 17v.01"/>',
+download:'<path d="M12 4v11m0 0-4-4m4 4 4-4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>',
+doc:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
+pdf:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
+cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
+copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/>',
+trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+archive:'<rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8M10 12h4"/>',
+chev:'<path d="m6 9 6 6 6-6"/>',
+refresh:'<path d="M20 11a8 8 0 0 0-14-4L4 9M4 4v5h5M4 13a8 8 0 0 0 14 4l2-2m0 5v-5h-5"/>',
+filter:'<path d="M3 5h18l-7 8v6l-4-2v-4z"/>',
+ext:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+cloud:'<path d="M7 18a5 5 0 1 1 1-9.9A6 6 0 0 1 19.5 10 4 4 0 0 1 18 18z"/>',
+info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/>',
+logout:'<path d="M9 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h4M16 8l4 4-4 4M20 12H9"/>',
+code:'<path d="m8 8-4 4 4 4M16 8l4 4-4 4"/>',
+list:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',olist:'<path d="M10 6h10M10 12h10M10 18h10M4 5l1-1v4M4 14h2l-2 3h2"/>',
+link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/>',
+bookmark:'<path d="M6 4h12v17l-6-4-6 4z"/>',send:'<path d="M3 11 21 3l-8 18-2-8z"/>',
+clip:'<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1M9 12l2 2 4-4"/>',
+star:'<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+megaphone:'<path d="M3 11v3a1 1 0 0 0 1 1h3l8 4V6L7 10H4a1 1 0 0 0-1 1zM18 9a4 4 0 0 1 0 6"/>',
+alarm:'<circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M4 4 2 6M20 4l2 2"/>',
+sort:'<path d="M4 7h16M7 12h10M10 17h4"/>',
+layers:'<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>',
+logs:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+flag:'<path d="M5 21V4m0 0h12l-2 4 2 4H5"/>',
+mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+folder:'<path d="M3 6a1 1 0 0 1 1-1h5l2 2h8a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>',
+dots:'<path d="M12 5h.01M12 12h.01M12 19h.01"/>'
+};
+const ic=(n,s=16)=>`<svg class="i" viewBox="0 0 24 24" width="${s}" height="${s}" style="font-size:${s}px">${P[n]||''}</svg>`;
+const paintIcons=(root=document)=>root.querySelectorAll('[data-ic]').forEach(e=>{if(e.dataset.done)return;const s=+e.dataset.s||16;const sp=document.createElement('span');sp.innerHTML=ic(e.dataset.ic,s);const svg=sp.firstChild;svg.setAttribute('class',(e.getAttribute('class')||'')+' i');svg.style.cssText+=e.getAttribute('style')||'';e.replaceWith(svg)});
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+let toastT;const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2200)};
+const initials=n=>n.replace(/^(Prof\.|Dr\.)\s*/,'').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+
+/* ---------- roles ---------- */
+const ROLES={
+ student:{label:'Student',tier:'Student Access Tier',badge:'Read Only',desc:'View syllabus modules, search coursework, and download assignment materials.',ph:'student.reg@college.edu',name:'Alex Morgan',sub:'Student / Enrollee',view:'Student View',hdr:'Student Active',pages:['library'],home:'library'},
+ faculty:{label:'Faculty',tier:'Faculty Manager Tier',badge:'Read / Write',desc:'Upload assignments, configure rubrics, and manage deadlines for your assigned courses.',ph:'prof.name@college.edu',name:'Prof. Sarah Jenkins',sub:'Faculty / Assignment Manager',view:'Faculty View',hdr:'Manager Active',pages:['dashboard','library','upload'],home:'dashboard'},
+ admin:{label:'Admin',tier:'System Admin Tier',badge:'Full Control',desc:'Manage users, roles, departments, audit logs, and institution-wide security policy.',ph:'admin.sys@college.edu',name:'Dr. Rajesh Rao',sub:'System Administrator / Dean',view:'Admin View',hdr:'Admin Active',pages:['dashboard','library','upload','users'],home:'dashboard'}
+};
+const DEMO={student:['student.demo@college.edu','student123'],faculty:['prof.demo@college.edu','faculty123'],admin:['admin.sys@college.edu','admin123']};
+let role='student',page='library';
+
+function setLoginRole(r){role=r;const d=ROLES[r];$$('#roleTabs button').forEach(b=>b.classList.toggle('on',b.dataset.role===r));
+  $('#tierName').textContent=d.tier;$('#tierBadge').textContent=d.badge;$('#tierDesc').textContent=d.desc;$('#email').placeholder=d.ph}
+$('#roleTabs').onclick=e=>{const b=e.target.closest('button');if(b)setLoginRole(b.dataset.role)};
+$$('[data-fill]').forEach(b=>b.onclick=()=>{const r=b.dataset.fill;setLoginRole(r);$('#email').value=DEMO[r][0];$('#pw').value=DEMO[r][1];$('#err').textContent=''});
+$('#eye').onclick=()=>{const p=$('#pw');p.type=p.type==='password'?'text':'password'};
+$('#loginForm').onsubmit=e=>{e.preventDefault();const em=$('#email').value.trim().toLowerCase();
+  if(!/^[^@\s]+@[^@\s]+\.edu$/.test(em)){$('#err').textContent='Please use a valid institutional .edu email address.';return}
+  if($('#pw').value.length<6){$('#err').textContent='Password must be at least 6 characters.';return}
+  $('#err').textContent='';enterApp(role)};
+
+/* ---------- app shell ---------- */
+const NAV=[['dashboard','grid','Dashboard'],['library','book','Assignment Library'],['upload','upload','Upload & Manage','Manager'],['users','shield','User Management','Admin'],['x-subjects','layers','Subjects & Depts'],['x-logs','lock','Logs & Security']];
+function enterApp(r){role=r;const d=ROLES[r];$('#login').classList.add('hidden');$('#app').classList.remove('hidden');
+  $('#meName').textContent=d.name;$('#meRole').textContent=d.sub;$('#meView').textContent=d.view;$('#meAv').textContent=$('#hdrAv').textContent=initials(d.name);$('#hdrBadge').textContent=d.hdr;
+  $('#welcome').textContent=`Welcome back, ${d.name} 👋`;
+  $('#nav').innerHTML=NAV.map(([id,icn,l,b])=>`<a data-p="${id}" class="${d.pages.includes(id)||id.startsWith('x-')?'':'locked'}"><span class="l">${ic(icn,16)}${l}</span>${b?`<span class="chip">${b}</span>`:''}</a>`).join('');
+  go(d.home);window.scrollTo(0,0)}
+$('#logout').onclick=()=>{$('#app').classList.add('hidden');$('#login').classList.remove('hidden');closeDrawer()};
+$('#nav').onclick=e=>{const a=e.target.closest('a');if(a)go(a.dataset.p)};
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)go(g.dataset.go)});
+function go(p){
+  if(p.startsWith('x-')){toast('This section is outside the scope of the current design set');return}
+  if(!ROLES[role].pages.includes(p)){toast(`Your ${ROLES[role].label} role does not have access to this section (RBAC)`);return}
+  page=p;$$('.page').forEach(s=>s.classList.toggle('on',s.id==='p-'+p));$$('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.p===p));
+  ({dashboard:renderDash,upload:renderRepo,users:renderUsers,library:renderLib})[p]();window.scrollTo(0,0)}
+
+/* ---------- data ---------- */
+const DASH=[
+ {code:'CS602',title:'Distributed Systems',sub:'Lab Manual 4 • Raft Consensus',subject:'Distributed Systems',fac:'Prof. S. Jenkins',due:'Tomorrow, 11:59 PM',urgent:1,type:'PDF (2.4 MB)',status:'Active'},
+ {code:'CS501',title:'Operating Systems',sub:'Semaphore & Mutex Problem Set',subject:'OS Kernel Lab',fac:'Dr. A. Raman',due:'Apr 24, 2025',type:'DOCX (1.1 MB)',status:'Active'},
+ {code:'MA401',title:'Discrete Mathematics',sub:'Probability & Markov Chains • Assgn 3',subject:'Applied Math',fac:'Prof. N. K. Rao',due:'Apr 28, 2025',type:'PDF (3.8 MB)',status:'Review'},
+ {code:'CS704',title:'Artificial Intelligence',sub:'Minimax & Alpha-Beta Pruning • PyTorch',subject:'AI & ML',fac:'Prof. K. Verma',due:'May 02, 2025',type:'PDF (5.1 MB)',status:'Active'}];
+const KPI=[['doc','148','Total Assignments','Across 8 academic departments','+12% MoM','M0 22 L30 18 L60 20 L90 10 L120 12 L150 4 L192 2'],['layers','24','Total Subjects','B.Tech CSE, IT & Data Science','Active Sync','M0 14 L40 16 L80 10 L120 12 L160 6 L192 8'],['upload','19','New This Week','Uploaded by 9 course managers','+4 today','M0 22 L30 20 L60 14 L100 16 L140 8 L192 4'],['alarm','6','Upcoming Deadlines','Closing within 48 hours','Action Required','M0 6 L40 10 L80 8 L120 16 L160 20 L192 24']];
+const DIST=[['Distributed Systems (CS602)',14,58,'#00236f'],['Web Technologies & Cloud (CS504)',18,75,'#6063ee'],['Data Structures & Algorithms (CS301)',22,91,'#1e3a8a'],['Artificial Intelligence & ML (CS704)',16,66,'#5200b5']];
+let dashF='Active';
+function renderDash(){
+  $('#kpis').innerHTML=KPI.map(([i,n,t,s,b,sp],k)=>`<div class="kpi"><div class="row between" style="align-items:flex-start"><div class="ic" style="${k==3?'background:var(--err-bg);color:var(--err)':''}">${ic(i,18)}</div><span class="chip ${k==3?'red':''}">${b}</span></div><div class="n" style="margin-top:16px;${k==3?'color:var(--err)':''}">${n}</div><div class="t">${t}</div><div class="muted">${s}</div><svg class="sp" viewBox="0 0 192 28" preserveAspectRatio="none"><path d="${sp}" fill="none" stroke="${k==3?'#ba1a1a':'#6063ee'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`).join('');
+  const rows=DASH.filter(r=>dashF==='All'||r.status==='Active');
+  $('#dashRows').innerHTML=rows.map(r=>`<tr><td><div class="code">${r.code}: ${r.title}</div><div class="sub">${r.sub}</div></td><td><span class="chip sq blue" style="color:var(--ink)">${r.subject}</span></td><td>${r.fac}</td><td style="font-weight:600;color:${r.urgent?'var(--err)':'var(--ink)'};font-size:13px">${r.due}</td><td><span class="chip gray" style="border-radius:4px">${ic('pdf',11)} ${r.type}</span></td><td><span class="chip ${r.status==='Review'?'':''}" style="${r.status==='Review'?'background:var(--s4);color:var(--ink)':''}">${r.status}</span></td><td style="text-align:right;white-space:nowrap"><button class="icon-btn" title="Edit" onclick="go('upload')">${ic('edit',13)}</button><button class="icon-btn" title="Preview" onclick="toast('Previewing ${r.code}')">${ic('eye',14)}</button><button class="icon-btn" title="Download" onclick="toast('Downloading ${r.code}…')">${ic('download',14)}</button></td></tr>`).join('');
+  $('#dashCount').textContent=`Showing ${rows.length} of 148 ${dashF==='All'?'':'active '}assignments`;
+  $('#dist').innerHTML=DIST.map(([t,n,p,c])=>`<div><div class="row between" style="align-items:flex-start;gap:8px"><b class="serif" style="font-size:16px;line-height:24px">${t}</b><b style="color:${c};font-size:13px;text-align:center;line-height:16px">${n}<br>Assgns</b></div><div class="progress"><i style="width:${p}%;background:${c}"></i></div><div class="row between muted"><span>Target: 24 total</span><span>${p}% Published${p>90?' (Complete)':''}</span></div></div>`).join('')}
+$('#dashFilter').onclick=e=>{const b=e.target.closest('button');if(!b)return;dashF=b.dataset.f;$$('#dashFilter button').forEach(x=>x.classList.toggle('on',x===b));renderDash()};
+function exportCSV(){const rows=[['Code','Title','Faculty','Due','Status'],...DASH.map(r=>[r.code,r.title,r.fac,r.due,r.status])];
+  const blob=new Blob([rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n')],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='eduassign-registry.csv';a.click();toast('Registry exported as CSV')}
+
+/* upload page */
+let REPO=[
+ {id:'ASG-2025-09',title:'Design Pattern Implementation & UML Architecture',meta:'Section A & B • 100 Pts',subj:'CS-403: SWE',up:'Oct 28, 2025',due:'Nov 24, 2025',left:'26 Days remaining',red:1,status:'Published'},
+ {id:'ASG-2025-08',title:'Red-Black Trees & AVL Balancing Benchmarks',meta:'Section C • 75 Pts',subj:'CS-302: DSA',up:'Oct 14, 2025',due:'Nov 04, 2025',left:'6 Days remaining',red:1,status:'Published'},
+ {id:'ASG-2025-10 [Unpublished]',title:'Kubernetes Pod Scaling & Multi-Zone Resiliency',meta:'Grad Capstone • 150 Pts',subj:'CS-501: Cloud',up:'Oct 27, 2025',due:'Dec 15, 2025',left:'Not visible to cohorts',status:'Draft'},
+ {id:'ASG-2025-01',title:'Heuristic Search & A* Pathfinding Algorithms',meta:'Archived Fall Term • 50 Pts',subj:'AI-210: Intel',up:'Sep 02, 2025',due:'Sep 30, 2025',left:'Term Closed',status:'Archived'}];
+function renderRepo(){
+  const subs=[...new Set(REPO.map(r=>r.subj))];const cur=$('#repoSubj').value;
+  $('#repoSubj').innerHTML='<option>All Subjects</option>'+subs.map(s=>`<option ${s===cur?'selected':''}>${s}</option>`).join('');
+  const q=$('#repoQ').value.toLowerCase(),sf=$('#repoSubj').value,st=$('#repoStat').value;
+  const rows=REPO.filter(r=>(sf==='All Subjects'||r.subj===sf)&&(st==='All Statuses'||r.status===st)&&(r.title+r.id+r.subj+r.meta).toLowerCase().includes(q));
+  $('#repoRows').innerHTML=rows.map(r=>`<tr data-id="${r.id}"><td><input type="checkbox" class="rc"></td><td><div style="font-size:10px;font-weight:700;letter-spacing:.05em;color:${r.status==='Published'?'var(--indigo)':'var(--ink-3)'}">${r.id}</div><b class="serif" style="font-size:15px;color:var(--ink);line-height:20px;display:block">${r.title}</b><span class="muted">${r.meta}</span></td><td><span class="chip sq blue" style="color:var(--primary)">${r.subj}</span></td><td><span class="row gap8"><span class="avatar sm">SJ</span>Prof. S. Jenkins</span></td><td>${r.up}</td><td><b style="font-size:13px;color:var(--ink);display:block">${r.due}</b><span style="font-size:11px;color:${r.red?'var(--err)':'var(--ink-3)'};font-weight:${r.red?600:400}">${r.red?'● ':''}${r.left}</span></td><td><span class="chip ${r.status==='Published'?'':r.status==='Draft'?'gray':'blue'}" style="${r.status==='Archived'?'color:var(--ink-3)':''}">${r.status}</span></td><td style="text-align:right;white-space:nowrap"><button class="icon-btn" title="Edit" data-a="edit">${ic('edit',13)}</button><button class="icon-btn" title="Duplicate" data-a="dup">${ic('copy',13)}</button><button class="icon-btn" title="Archive" data-a="arch">${ic('archive',13)}</button><button class="icon-btn" title="Delete" data-a="del">${ic('trash',13)}</button></td></tr>`).join('')||'<tr><td colspan="8" style="text-align:center;padding:32px" class="muted">No assignments match the current filters.</td></tr>';
+  $('#repoCount').textContent=`Showing ${rows.length} of 24 curriculum assignments`;$('#selCount').textContent='0 selected';$('#chkAll').checked=false;
+  $('#statPub').textContent=`${14+REPO.filter(r=>r.status==='Published').length} Problem Sets`}
+['repoQ','repoSubj','repoStat'].forEach(i=>$('#'+i).addEventListener('input',renderRepo));
+$('#repoRows').onclick=e=>{const b=e.target.closest('[data-a]');if(!b)return;const tr=b.closest('tr'),r=REPO.find(x=>x.id===tr.dataset.id),a=b.dataset.a;
+  if(a==='edit'){$('#fTitle').value=r.title;window.scrollTo({top:0,behavior:'smooth'});toast('Loaded into the form for editing')}
+  if(a==='dup'){REPO.unshift({...r,id:r.id.replace(/\d+(?=\D*$)/,n=>String(+n+50)),title:r.title+' (Copy)',status:'Draft',left:'Not visible to cohorts',red:0});renderRepo();toast('Assignment duplicated as draft')}
+  if(a==='arch'){r.status='Archived';r.left='Term Closed';r.red=0;renderRepo();toast('Assignment archived')}
+  if(a==='del'&&confirm('Delete this assignment permanently?')){REPO=REPO.filter(x=>x!==r);renderRepo();toast('Assignment deleted')}};
+$('#repoRows').addEventListener('change',()=>{$('#selCount').textContent=`${$$('.rc:checked').length} selected`});
+$('#chkAll').onchange=e=>{$$('.rc').forEach(c=>c.checked=e.target.checked);$('#selCount').textContent=`${$$('.rc:checked').length} selected`};
+const drop=$('#drop'),file=$('#file');
+drop.onclick=()=>file.click();file.onchange=()=>setFile(file.files[0]);
+['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over')}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over')}));
+drop.addEventListener('drop',e=>setFile(e.dataTransfer.files[0]));
+function setFile(f){if(!f)return;if(!/\.(pdf|docx)$/i.test(f.name)){toast('Only .PDF or .DOCX files are accepted');return}
+  if(f.size>25*1024*1024){toast('File exceeds the 25 MB limit');return}$('#fname').textContent=f.name;$('#fsize').textContent=(f.size/1048576).toFixed(1)+' MB'}
+$('#rmFile').onclick=()=>{$('#fname').textContent='No file staged';$('#fsize').textContent='—'};
+function newRow(status){const t=$('#fTitle').value.trim();if(!t){toast('Assignment title is required');return}
+  const d=new Date($('#fDue').value||Date.now());const fmt=x=>x.toLocaleDateString('en-US',{month:'short',day:'2-digit',year:'numeric'});
+  const days=Math.max(0,Math.ceil((d-Date.now())/864e5));
+  REPO.unshift({id:'ASG-2025-'+String(11+REPO.length).padStart(2,'0')+(status==='Draft'?' [Unpublished]':''),title:t,meta:`Section A & B • ${$('#fPts').value||0} Pts`,subj:$('#fSubj').value.split(':')[0].replace('-','-')+': '+($('#fSubj').value.split(': ')[1]||'').split(' ').map(w=>w[0]).join('').slice(0,4),up:fmt(new Date()),due:fmt(d),left:status==='Draft'?'Not visible to cohorts':`${days} Days remaining`,red:status!=='Draft'&&days<=7,status});
+  renderRepo();toast(status==='Draft'?'Saved as draft':'Assignment published — students notified')}
+$('#uploadForm').onsubmit=e=>{e.preventDefault();newRow('Published')};$('#draftBtn').onclick=()=>newRow('Draft');
+
+/* users page */
+let USERS=[
+ {n:'Prof. Sarah Jenkins',e:'s.jenkins@univ.edu',d:'Computer Science',id:'CSE-FAC-2019',r:'manager',u:1,ed:1,m:0},
+ {n:'Dr. Rajesh Rao',e:'r.rao@univ.edu',d:'Computer Science / Dean',id:'CSE-ADM-004',r:'admin',u:1,ed:1,m:1},
+ {n:'Alex Morgan',e:'a.morgan24@student.univ.edu',d:'Computer Science - Year 3',id:'ROL-2022-8911',r:'student',u:0,ed:0,m:0},
+ {n:'Prof. Elena Rostova',e:'e.rostova@univ.edu',d:'Information Technology',id:'IT-FAC-1904',r:'manager',u:1,ed:1,m:0},
+ {n:'Liam Chen',e:'l.chen23@student.univ.edu',d:'Electronics & Comm',id:'ROL-2023-4102',r:'student',u:0,ed:0,m:0},
+ {n:'Dr. Kenneth Miller',e:'k.miller@univ.edu',d:'Mechanical Engineering',id:'MEC-FAC-1102',r:'manager',u:1,ed:1,m:0}];
+let uRole='all';
+const RLAB={manager:['Assignment Manager','rolepill'],admin:['System Admin','rolepill admin'],student:['Student (Read Only)','rolepill student']};
+function renderUsers(){
+  const q=$('#uQ').value.toLowerCase();
+  const rows=USERS.filter(u=>(uRole==='all'||u.r===uRole)&&(u.n+u.e+u.id).toLowerCase().includes(q));
+  $('#uRows').innerHTML=rows.map(u=>`<tr data-e="${u.e}"><td><div class="uid"><span class="avatar lg">${initials(u.n)}</span><div><b>${u.n}</b><span class="muted">${u.e}</span></div></div></td><td style="max-width:140px;font-size:12px;color:var(--ink);line-height:15px">${u.d}<br>${u.id}</td><td><span class="${RLAB[u.r][1]}">${ic(u.r==='admin'?'shield':u.r==='student'?'book':'doc',13)}${RLAB[u.r][0]}</span></td>${['u','ed','m'].map(k=>`<td><span class="toggle ${u[k]?'on':''}" data-k="${k}" role="switch" aria-checked="${!!u[k]}"></span></td>`).join('')}<td><span class="chip" style="background:var(--s2);color:var(--indigo)"><span class="dot"></span>Active</span></td><td><button class="btn soft sm" style="color:var(--primary);flex-direction:column;padding:6px 10px;line-height:13px" data-a="${u.r==='student'?'promote':'edit'}">${u.r==='student'?'Promote<br>Role':'Edit<br>Access'}</button></td></tr>`).join('');
+  $('#uShow').textContent=`Showing ${rows.length} of ${$('#uTotal').textContent}`;$('#uFoot').textContent=`Showing 1-${rows.length} of ${$('#uTotal').textContent} users  •  Filtered by: ${$('#uDept').value}`}
+$('#uRows').onclick=e=>{const t=e.target.closest('.toggle'),b=e.target.closest('[data-a]');const u=USERS.find(x=>x.e===e.target.closest('tr')?.dataset.e);if(!u)return;
+  if(t){if(u.r==='student'&&t.dataset.k!=='u'){toast('Students cannot hold edit or user-management rights');return}u[t.dataset.k]=u[t.dataset.k]?0:1;t.classList.toggle('on');toast(`${u.n}: permission ${u[t.dataset.k]?'granted':'revoked'}`)}
+  if(b&&b.dataset.a==='promote'){u.r='manager';u.u=1;u.ed=1;renderUsers();toast(`${u.n} promoted to Assignment Manager`)}
+  else if(b)toast(`Editing access for ${u.n}`)};
+$('#uRole').onclick=e=>{const b=e.target.closest('button');if(!b)return;uRole=b.dataset.r;$$('#uRole button').forEach(x=>x.classList.toggle('on',x===b));renderUsers()};
+['uQ','uDept'].forEach(i=>$('#'+i).addEventListener('input',renderUsers));
+function addUser(){const n=prompt('Full name of the new user:');if(!n)return;const e=prompt('Institutional email (.edu):');if(!/@.+\.edu$/.test(e||'')){toast('A valid .edu email is required');return}
+  USERS.unshift({n,e,d:$('#uDept').value,id:'NEW-'+Math.floor(1000+Math.random()*9000),r:'student',u:0,ed:0,m:0});$('#uTotal').textContent=(1420+1).toLocaleString();renderUsers();toast('User added with Student (Read Only) role')}
+
+/* library */
+const LIB=[
+ {c:'CS602',s:'Distributed Systems',t:'Assignment 4: Paxos Consensus Algorithm & RPC Implementation',p:'Prof. Sarah Jenkins',dept:'Dept. of Computer Science',desc:'Design and deploy a fault-tolerant multi-node replicated state engine…',up:'Oct 14, 2025',dl:'Oct 28, 2025',days:3,tm:'11:59 PM',w:15,wl:'15% Internal Marks',fmt:'Go / C++ / Python',file:'Paxos_Assignment_Spec',size:'3.8 MB'},
+ {c:'CS601',s:'Web Tech',t:'Lab 3: Modern Full-Stack SSR with Next.js & GraphQL Schema',p:'Dr. Aris Thorne',dept:'Interactive Media Lab',desc:'Construct a modular student course registration catalog with federated…',up:'Oct 10, 2025',dl:'Nov 03, 2025',days:9,tm:'05:00 PM',w:10,wl:'10% Internal Marks',fmt:'TypeScript / Node',file:'FullStack_Lab3_Instructic',size:'2.1 MB'},
+ {c:'CS603',s:'AI & ML',t:'Project 2: Convolutional Neural Networks for Medical Imaging',p:'Prof. Elena Rostova',dept:'Data Intelligence Division',desc:'Train a deep ResNet-50 variant to classify pulmonary chest…',up:'Oct 16, 2025',dl:'Nov 08, 2025',days:14,tm:'11:59 PM',w:20,wl:'20% Internal Marks',fmt:'PyTorch / Jupyter',file:'Medical_Vision_Brief_v2.',size:'4.7 MB'},
+ {c:'MA401',s:'Discrete Math',t:'Problem Set 5: Graph Theory, Planarity & Chromatic Coloring',p:'Dr. Kenneth Wu',dept:'Mathematics Faculty',desc:'Formal mathematical proofs verifying Kuratowski\'s theorem, planar graph…',up:'Oct 15, 2025',dl:'Nov 12, 2025',days:12,tm:'02:00 PM',w:10,wl:'10% Internal Marks',fmt:'LaTeX / Handwritten PDF',file:'PS5_GraphTheory_Proofs',size:'1.4 MB'},
+ {c:'CS602',s:'Distributed Systems',t:'Assignment 5: Raft Cluster Heartbeats & Log Replication',p:'Prof. Sarah Jenkins',dept:'Dept. of Computer Science',desc:'Implementation of candidate election states, randomized heartbeats, non-…',up:'Oct 18, 2025',dl:'Nov 19, 2025',days:19,tm:'11:59 PM',w:15,wl:'15% Internal Marks',fmt:'Go 1.22 Standard',file:'Raft_Consensus_Lab5.pd',size:'3.1 MB'},
+ {c:'CS603',s:'AI & ML',t:'Assignment 3: Deep Q-Learning in Continuous Gym Environments',p:'Prof. Elena Rostova',dept:'Data Intelligence Division',desc:'Implement prioritized experience replay and target network…',up:'Oct 17, 2025',dl:'Nov 25, 2025',days:25,tm:'11:59 PM',w:15,wl:'15% Internal Marks',fmt:'Python 3.11 / PyTorch',file:'DQN_LunarLander_Speci',size:'2.8 MB'}];
+let lS='all',lD='up';
+function renderLib(){
+  const q=$('#lQ').value.toLowerCase();
+  let rows=LIB.filter(a=>(lS==='all'||a.c===lS)&&(a.t+a.c+a.s+a.p).toLowerCase().includes(q)&&(lD==='up'?true:lD==='week'?a.days<=7:a.days>100));
+  const so=$('#lSort').value;rows=[...rows].sort((a,b)=>so==='dl'?a.days-b.days:so==='w'?b.w-a.w:new Date(b.up)-new Date(a.up));
+  $('#lCount').textContent=`Showing ${rows.length} Coursework Assignments`;
+  $('#libGrid').innerHTML=rows.map(a=>{const i=LIB.indexOf(a);return`<article class="acard"><div class="tagrow"><span class="tag" style="background:var(--s3)">${a.c} • ${a.s}</span><span class="chip ${a.days<=3?'red':''}" style="${a.days<=3?'':'background:var(--s2);color:var(--ink)'}">${a.days<=3?'● ':''}Due in ${a.days} Days</span></div><h3>${a.t}</h3><div class="row between muted" style="gap:8px"><span class="row" style="gap:4px;color:var(--indigo)">${ic('user',11)}<span style="color:var(--ink-2)">${a.p}</span></span><span>${a.dept}</span></div><p class="sub" style="font-size:13px;line-height:20px">${a.desc}</p><div class="meta"><div><small>Uploaded</small>${a.up}</div><div><small>Deadline</small><span style="color:${a.days<=3?'var(--err)':'inherit'}">${a.dl}${a.days<=3?' •':' •'}<br>${a.tm}</span></div><div><small>Weightage</small><span style="color:var(--indigo)">${a.wl}</span></div><div><small>Format</small>${a.fmt}</div></div><div class="file"><span class="row gap8" style="min-width:0"><span style="color:var(--err)">${ic('pdf',15)}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.file}</span></span><span class="muted">${a.size}</span></div><div class="row gap8"><button class="btn navy grow" data-dl="${i}">${ic('download',13)}Download PDF</button><button class="btn soft" style="padding:10px" data-open="${i}" title="Preview">${ic('ext',14)}</button></div></article>`}).join('')||'<p class="muted" style="grid-column:1/-1;text-align:center;padding:40px">No assignments match your filters.</p>'}
+$('#libGrid').onclick=e=>{const o=e.target.closest('[data-open]'),d=e.target.closest('[data-dl]');if(o)openDrawer(+o.dataset.open);if(d)toast(`Downloading ${LIB[+d.dataset.dl].file}.pdf…`)};
+$('#lSubj').onclick=e=>{const b=e.target.closest('button');if(!b)return;lS=b.dataset.s;$$('#lSubj button').forEach(x=>{x.classList.toggle('on',x===b);x.style.background=x===b?'var(--s4)':'';x.style.color=x===b?'var(--primary)':''});renderLib()};
+$('#lDead').onclick=e=>{const b=e.target.closest('button');if(!b)return;lD=b.dataset.d;$$('#lDead button').forEach(x=>{x.classList.toggle('on',x===b);x.style.background=x===b?'var(--s4)':'';x.style.color=x===b?'var(--primary)':''});renderLib()};
+$('#lQ').addEventListener('input',renderLib);$('#lSort').addEventListener('change',renderLib);
+$('#gsearch').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.value){go('library');$('#lQ').value=e.target.value;renderLib()}});
+
+/* drawer */
+function openDrawer(i){const a=LIB[i];
+  $('#drawer').innerHTML=`<div class="dh"><div class="row gap8"><div style="width:32px;height:32px;border-radius:8px;background:#fff;display:grid;place-items:center;color:var(--primary)">${ic('doc',16)}</div><div><div class="muted" style="font-size:10px;letter-spacing:.05em;text-transform:uppercase;font-weight:600">Coursework Inspector</div><b class="serif" style="font-size:14px">Assignment Specification</b></div></div><button class="icon-btn" id="dClose">${ic('x',18)}</button></div>
+  <div class="db"><div class="row gap8" style="flex-wrap:wrap"><span class="chip" style="background:var(--s3);color:var(--primary)">${a.c}: ${a.s} (Semester 6)</span><span class="chip red">● Due in ${a.days} Days (${a.dl.replace(', 2025','')}, 2025)</span><span class="chip blue" style="color:var(--ink-2)">${a.w}% Weightage</span></div>
+  <h2 style="font-size:24px;line-height:30px;letter-spacing:-.01em">${a.t}</h2>
+  <div class="pscard" style="flex-direction:row;align-items:center;gap:12px;padding:12px 16px"><span class="avatar">${initials(a.p)}</span><div class="grow"><b style="color:var(--ink);font-size:13px">${a.p}</b><br><span class="muted">Lead Course Instructor</span></div><a style="color:var(--indigo);font-size:11px;font-weight:600;cursor:pointer;display:flex;gap:4px;align-items:center" onclick="toast('Opening mail composer…')">${ic('mail',12)}Contact Instructor</a></div>
+  <div><h3 style="font-size:14px;display:flex;gap:8px;align-items:center;margin-bottom:8px;color:var(--ink)"><span style="color:var(--indigo)">${ic('doc',14)}</span>Problem Statement &amp; Guidelines</h3><div class="pscard">
+   <p>In this project, students are required to implement a robust decentralized state machine replication layer modeled after Leslie Lamport's Single-Decree and Multi-Paxos protocol specifications.</p>
+   <div class="step"><i>1</i><span><b style="color:var(--ink)">Phase 1: Prepare &amp; Promise</b> — Proposers must issue numbered ballots strictly greater than any prior known epoch. Acceptors maintain highest promised ballot state.</span></div>
+   <div class="step"><i>2</i><span><b style="color:var(--ink)">Phase 2: Propose &amp; Accept</b> — Upon gathering majoritarian consensus (&gt;= n/2 + 1), commit chosen log operations acrossReplicated RPC channels.</span></div>
+   <div class="step"><i>3</i><span><b style="color:var(--ink)">Fault Tolerance</b> — Simulate network partitions with 33% message drop rates; guarantee linearizability with zero split-brain conditions.</span></div></div></div>
+  <div><h3 style="font-size:14px;display:flex;gap:8px;align-items:center;margin-bottom:8px;color:var(--ink)"><span style="color:var(--indigo)">${ic('clip',14)}</span>Evaluation Criteria &amp; Grading Rubric</h3><div class="rubric"><div><b>40%</b><span style="color:var(--ink)">Core Logic</span><br>Consensus adherence</div><div><b style="color:var(--ink)">30%</b><span style="color:var(--ink)">Test Suites</span><br>Chaos &amp; RPC drop pass</div><div><b style="color:var(--ink)">30%</b><span style="color:var(--ink)">Documentation</span><br>Design report &amp; proofs</div></div></div>
+  <div><div class="row between" style="margin-bottom:8px"><h3 style="font-size:14px;display:flex;gap:8px;align-items:center;color:var(--ink)"><span style="color:var(--indigo)">${ic('folder',14)}</span>Attached Resources &amp; Starter Bundles</h3><span class="muted">3 items (12.4 MB)</span></div>
+   <div style="display:flex;flex-direction:column;gap:8px">${[['pdf','Paxos_Assignment_Spec.pdf','Formal Specification • 3.8 MB'],['folder','Starter_Code_Template_Go.zip','Scaffolded Interfaces & Testbed • 7.4 MB'],['pdf','Rubric_Distributed_Systems.pdf','Grading Matrix Guide • 1.2 MB']].map(([i,n,s])=>`<div class="res"><span style="color:${i==='pdf'?'var(--err)':'var(--indigo)'}">${ic(i,18)}</span><div class="grow"><b style="font-size:12px;color:var(--ink);font-weight:500">${n}</b><br><span class="muted" style="font-size:11px">${s}</span></div><button class="icon-btn" onclick="toast('Downloading ${n}…')">${ic('download',14)}</button></div>`).join('')}</div></div>
+  <div class="pscard" style="flex-direction:row;gap:12px;font-size:11px;line-height:14px;background:var(--s2)"><span style="color:var(--ink-3)">${ic('lock',16)}</span><span><b style="color:var(--ink)">Security Protocol Enforced:</b> Submission uploading and specification amendments are prohibited inside the public library viewer. Submissions must occur via LMS portal prior to the deadline cutoff.</span></div></div>
+  <div class="df"><button class="btn soft" id="dClose2">Close Preview</button><button class="btn navy grow" onclick="toast('Preparing ${a.file}.zip…')">${ic('download',14)}Download Complete Package (.zip)</button></div>`;
+  $('#drawer').classList.add('on');$('#dBg').classList.add('on');$('#dClose').onclick=$('#dClose2').onclick=closeDrawer}
+function closeDrawer(){$('#drawer').classList.remove('on');$('#dBg').classList.remove('on')}
+$('#dBg').onclick=closeDrawer;document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
+
+paintIcons();setLoginRole('student');
+</script>
+</body>
+</html>
